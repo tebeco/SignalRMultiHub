@@ -1,9 +1,10 @@
 import React from 'react';
+import './App.css'
 
 export const DisconnectedApp = () => {
   return (
-    <div>
-        <p>Could not connect to signalR.</p>
+    <div className="App">
+      <p>Could not connect to signalR.</p>
     </div>
   );
 }

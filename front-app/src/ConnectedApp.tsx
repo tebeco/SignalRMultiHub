@@ -1,8 +1,11 @@
 import React from 'react';
+import './App.css'
 import { Tile } from './Tile';
 
 export const ConnectedApp = () => {
     return (
-        <Tile name="coin" />
+        <div className="App">
+            <Tile name="coin" />
+        </div>
     );
 }
