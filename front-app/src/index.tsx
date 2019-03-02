@@ -9,7 +9,7 @@ import { DisconnectedApp } from './DisconnectedApp';
 const clientsEndpoint = "https://localhost:5001/clients"
 
 
-const getConnection = (endpoint: string) => {
+const getConnection = async (endpoint: string) => {
     const hubConnection = new HubConnectionBuilder()
         .withUrl(endpoint)
         .build();
@@ -18,14 +18,14 @@ const getConnection = (endpoint: string) => {
         ReactDOM.render(<DisconnectedApp />, document.getElementById('root'));
     });
 
-    hubConnection
-        .start()
-        .then(() => {
-            ReactDOM.render(<ConnectedApp />, document.getElementById('root'));
-        })
-        .catch((err) => {
-            ReactDOM.render(<DisconnectedApp />, document.getElementById('root'));
-        });
+    try {
+        await hubConnection.start()
+        ReactDOM.render(<ConnectedApp />, document.getElementById('root'));
+    }
+    catch{
+
+        ReactDOM.render(<DisconnectedApp />, document.getElementById('root'));
+    }
 };
 
 getConnection(clientsEndpoint);
