@@ -20,7 +20,7 @@ const getConnection = async (endpoint: string) => {
 
     try {
         await hubConnection.start()
-        ReactDOM.render(<ConnectedApp />, document.getElementById('root'));
+        ReactDOM.render(<ConnectedApp connection={hubConnection} />, document.getElementById('root'));
     }
     catch{
 
