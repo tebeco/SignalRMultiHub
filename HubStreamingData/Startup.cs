@@ -26,7 +26,12 @@ namespace HubStreamingData
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR()
-                    .AddAzureSignalR();
+                    .AddStackExchangeRedis(options =>
+                    {
+                        options.Configuration.ClientName = "StreamingSignalRClient";
+                    })
+                    // .AddAzureSignalR()
+                    ;
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

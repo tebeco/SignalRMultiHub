@@ -28,6 +28,10 @@ namespace HubHandlingWebClient
         {
             services.AddCors();
             services.AddSignalR()
+                    .AddStackExchangeRedis(options =>
+                    {
+                        options.Configuration.ClientName = "WebSignalRClient";
+                    })
                     // .AddAzureSignalR()
                     ;
 
