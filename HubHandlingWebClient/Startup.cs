@@ -31,6 +31,8 @@ namespace HubHandlingWebClient
                     // .AddAzureSignalR()
                     ;
 
+            services.AddSingleton<ClientGroupManager>();
+            services.AddHostedService<TimedDataGenerator>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

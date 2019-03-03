@@ -3,20 +3,17 @@ import './App.css'
 import { Tile } from './Tile';
 import { HubConnection } from '@aspnet/signalr';
 
+export type SubscribeCallback = (groupName: string) => Promise<void>;
 type ConnectedAppProps = {
-    connection: HubConnection
+    connection: HubConnection,
 }
-
-export type SubscribeCallback = (group: string) => void;
 
 export const ConnectedApp = (props: ConnectedAppProps) => {
     return (
         <div className="App">
-            <Tile name="Some tile name" onSubscribe={(group) => subscribe(group)} />
+            <Tile tileId="Some tile name" connection={props.connection} />
+            <Tile tileId="Some tile name" connection={props.connection} />
         </div>
     );
 }
 
-const subscribe: SubscribeCallback = (groupName) => {
-    console.log(`joining group : ${groupName}`);
-}
