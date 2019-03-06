@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace HubStreamingData
+namespace ClientHubWebApi
 {
     public class Startup
     {
@@ -25,13 +18,18 @@ namespace HubStreamingData
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddSignalR()
                     .AddStackExchangeRedis(options =>
                     {
-                        options.Configuration.ClientName = "StreamingSignalRClient";
+                        options.Configuration.EndPoints.Add("localhost", 6379);
+                        options.Configuration.ClientName = "WebSignalRClient";
                     })
                     // .AddAzureSignalR()
                     ;
+
+            services.AddSingleton<ClientGroupManager>();
+            services.AddHostedService<TimedDataGenerator>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -41,18 +39,24 @@ namespace HubStreamingData
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyHeader()
+                           .WithMethods("GET", "POST")
+                           .AllowCredentials();
+                });
             }
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
 
             app.UseSignalR(hubRouteBuilder =>
             {
-                hubRouteBuilder.MapHub<StreamingtHub>("/streamingHub");
+                hubRouteBuilder.MapHub<ClientHub>($"/clients");
             });
 
             app.UseMvc();
