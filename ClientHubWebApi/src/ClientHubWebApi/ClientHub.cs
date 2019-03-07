@@ -7,20 +7,27 @@ namespace ClientHubWebApi
 {
     public class ClientHub : Hub
     {
-        private readonly ILogger<ClientHub> logger;
+        private readonly SubscribtionManager _subscribtionManager;
 
-        public ClientHub(ILogger<ClientHub> logger)
+        public ClientHub(SubscribtionManager subscribtionManager)
         {
-            this.logger = logger;
+            _subscribtionManager = subscribtionManager;
         }
 
         public async Task GetStream(RequestStream requestStream)
         {
+            await Task.Yield();
+           var channel = _subscribtionManager.GetChannel(requestStream);
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
             return Task.CompletedTask;
         }
+    }
+
+    public class RequestStream
+    {
+        string Underlying { get; set; }
     }
 }

@@ -1,7 +1,7 @@
+using ClientHubWebApi;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace HubHandlingWebClient
 {
@@ -9,16 +9,20 @@ namespace HubHandlingWebClient
     {
         private Timer timer = null;
         private readonly IDataSource<T> _dataSource;
+        private readonly SubscribtionManager _subscribtionManager;
         private CancellationToken _cancellationToken;
+        private Channel<T> _channel;
 
-        public PeriodicDataSource(IDataSource<T> dataSource)
+        public PeriodicDataSource(IDataSource<T> dataSource, SubscribtionManager subscribtionManager)
         {
             _dataSource = dataSource;
+            _subscribtionManager = subscribtionManager;
         }
 
         protected void Subscribe(string topic, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
+            _channel = _subscribtionManager.GetChannel()
             timer = new Timer(Timer_Callback, null, 1000, 1000);
         }
 
@@ -35,8 +39,8 @@ namespace HubHandlingWebClient
         {
             await Task.Yield();
             var data = _dataSource.GetNextData();
-            
-            //Push it
+
+            await _channel.Writer.WriteAsync(data, _cancellationToken);
         }
     }
 }
