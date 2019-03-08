@@ -115,8 +115,53 @@ namespace ClientHubWebApi.DataSources.Kaggle
             return flip ? -val : val;
         }
 
-        private static DateTime ParseSectionAsDateTime(StringBuilder lien, ref int startIndex)
+        private static DateTime ParseSectionAsDateTime(StringBuilder line, ref int startIndex)
         {
+            int commaCounter = 0;
+            int dashCounter = 0;
+            int day = -1;
+            int month = -1;
+            int year = -1;
+            int val = 0;
+
+            for (var index = startIndex; index < line.Length; index++)
+            {
+                var c = line[index];
+                if (c == ',')
+                {
+                    commaCounter++;
+
+                    if (commaCounter == 2)
+                    {
+                        startIndex = index;
+                        break;
+                    }
+                    continue;
+                }
+
+                if (c == '-')
+                {
+                    dashCounter++;
+
+                    if(dashCounter == 0)
+                    {
+                        day = val;
+                    }
+                    else if (dashCounter == 1)
+                    {
+                        month = val;
+                    }
+                    else
+                    {
+                        year = val;
+                    }
+                    continue;
+                }
+
+                val *= 10;
+                val += c - '0';
+
+            }
             return DateTime.Now;
         }
 

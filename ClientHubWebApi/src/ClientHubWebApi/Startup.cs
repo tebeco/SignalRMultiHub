@@ -20,16 +20,17 @@ namespace ClientHubWebApi
         {
             services.AddCors();
             services.AddSignalR()
+                    /*/
                     .AddStackExchangeRedis(options =>
                     {
                         options.Configuration.EndPoints.Add("localhost", 6379);
                         options.Configuration.ClientName = "WebSignalRClient";
                     })
-                    // .AddAzureSignalR()
+                    /*/
+                    .AddAzureSignalR()
+                    //*/
                     ;
 
-            services.AddSingleton<ClientGroupManager>();
-            services.AddHostedService<TimedDataGenerator>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
