@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClientHubWebApi.DataSources.Kaggle
 {
-    public class StockLineParser : ILineParser<Stock>
+    public class LineParser : ILineParser<Stock>
     {
         //private List<Stock> list = new List<Stock>();
 
@@ -26,7 +26,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
             return new Stock(name, date, open, high, low, close, volume, openInt);
         }
 
-        private static decimal ParseSectionAsDecimal(StringBuilder line, ref int startIndex)
+        public static decimal ParseSectionAsDecimal(StringBuilder line, ref int startIndex)
         {
             decimal val = 0;
             bool seenDot = false;
@@ -80,7 +80,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
             return flip ? -val : val;
         }
 
-        private static int ParseSectionAsInt(StringBuilder line, ref int startIndex)
+        public static int ParseSectionAsInt(StringBuilder line, ref int startIndex)
         {
             int val = 0;
             int counter = 0;
@@ -115,7 +115,42 @@ namespace ClientHubWebApi.DataSources.Kaggle
             return flip ? -val : val;
         }
 
-        private static DateTime ParseSectionAsDateTime(StringBuilder line, ref int startIndex)
+        public static long ParseSectionAsLong(StringBuilder line, ref int startIndex)
+        {
+            long val = 0;
+            int counter = 0;
+            bool flip = false;
+
+            for (var index = startIndex; index < line.Length; index++)
+            {
+                var c = line[index];
+                if (c == ',')
+                {
+                    counter++;
+
+                    if (counter == 2)
+                    {
+                        startIndex = index;
+                        break;
+                    }
+                    continue;
+                }
+
+                // the number is a negative means we have to flip it at the end.
+                if (c == '-')
+                {
+                    flip = true;
+                    continue;
+                }
+
+                val *= 10;
+                val += c - '0';
+            }
+
+            return flip ? -val : val;
+        }
+
+        public static DateTime ParseSectionAsDateTime(StringBuilder line, ref int startIndex)
         {
             int commaCounter = 0;
             int dashCounter = 0;
@@ -131,7 +166,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 {
                     commaCounter++;
 
-                    if (commaCounter == 2)
+                    if (commaCounter == 1)
                     {
                         startIndex = index;
                         break;

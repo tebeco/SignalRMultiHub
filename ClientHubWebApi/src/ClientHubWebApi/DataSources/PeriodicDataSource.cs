@@ -11,7 +11,7 @@ namespace HubHandlingWebClient
         private readonly IDataSource<T> _dataSource;
         private readonly SubscribtionManager _subscribtionManager;
         private CancellationToken _cancellationToken;
-        private Channel<T> _channel;
+        //private Channel<T> _channel;
 
         public PeriodicDataSource(IDataSource<T> dataSource, SubscribtionManager subscribtionManager)
         {
@@ -40,7 +40,7 @@ namespace HubHandlingWebClient
             await Task.Yield();
             var data = _dataSource.GetNextData();
 
-            await _channel.Writer.WriteAsync(data, _cancellationToken);
+            //await _channel.Writer.WriteAsync(data, _cancellationToken);
         }
     }
 }
