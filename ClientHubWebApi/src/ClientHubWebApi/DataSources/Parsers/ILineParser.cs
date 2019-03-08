@@ -3,6 +3,4 @@
 public interface ILineParser<T>
 {
     T ParseLine(StringBuilder line);
-
-    void Dump();
 }

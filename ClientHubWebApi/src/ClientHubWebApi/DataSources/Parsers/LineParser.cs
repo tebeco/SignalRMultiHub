@@ -31,8 +31,6 @@ namespace ClientHubWebApi.DataSources.Kaggle
             decimal val = 0;
             bool seenDot = false;
             int fractionCounter = 10;
-            int counter = 0;
-            bool flip = false;
 
             for (var index = startIndex; index < line.Length; index++)
             {
@@ -40,22 +38,8 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 var c = line[index];
                 if (c == ',')
                 {
-                    counter++;
-
-                    if (counter == 2)
-                    {
-                        startIndex = index;
-                        break;
-                    }
-                    continue;
-                }
-
-                // we have skipped enough commas, the next section before the upcoming comma is what we are interested in
-                // the number is a negative means we have to flip it at the end.
-                if (c == '-')
-                {
-                    flip = true;
-                    continue;
+                    startIndex = index + 1;
+                    break;
                 }
 
                 if (c == '.')
@@ -77,82 +61,51 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 }
             }
 
-            return flip ? -val : val;
+            return val;
         }
 
         public static int ParseSectionAsInt(StringBuilder line, ref int startIndex)
         {
             int val = 0;
-            int counter = 0;
-            bool flip = false;
 
             for (var index = startIndex; index < line.Length; index++)
             {
                 var c = line[index];
                 if (c == ',')
                 {
-                    counter++;
-
-                    if (counter == 2)
-                    {
-                        startIndex = index;
-                        break;
-                    }
-                    continue;
-                }
-
-                // the number is a negative means we have to flip it at the end.
-                if (c == '-')
-                {
-                    flip = true;
-                    continue;
+                    startIndex = index + 1;
+                    break;
                 }
 
                 val *= 10;
                 val += c - '0';
             }
 
-            return flip ? -val : val;
+            return val;
         }
 
         public static long ParseSectionAsLong(StringBuilder line, ref int startIndex)
         {
             long val = 0;
-            int counter = 0;
-            bool flip = false;
 
             for (var index = startIndex; index < line.Length; index++)
             {
                 var c = line[index];
                 if (c == ',')
                 {
-                    counter++;
-
-                    if (counter == 2)
-                    {
-                        startIndex = index;
-                        break;
-                    }
-                    continue;
-                }
-
-                // the number is a negative means we have to flip it at the end.
-                if (c == '-')
-                {
-                    flip = true;
-                    continue;
+                    startIndex = index + 1;
+                    break;
                 }
 
                 val *= 10;
                 val += c - '0';
             }
 
-            return flip ? -val : val;
+            return val;
         }
 
         public static DateTime ParseSectionAsDateTime(StringBuilder line, ref int startIndex)
         {
-            int commaCounter = 0;
             int dashCounter = 0;
             int day = -1;
             int month = -1;
@@ -164,21 +117,15 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 var c = line[index];
                 if (c == ',')
                 {
-                    commaCounter++;
-
-                    if (commaCounter == 1)
-                    {
-                        startIndex = index;
-                        break;
-                    }
-                    continue;
+                    startIndex = index + 1;
+                    break;
                 }
 
                 if (c == '-')
                 {
                     dashCounter++;
 
-                    if(dashCounter == 1)
+                    if (dashCounter == 1)
                     {
                         year = val;
                     }
@@ -186,29 +133,17 @@ namespace ClientHubWebApi.DataSources.Kaggle
                     {
                         month = val;
                     }
-                    else
-                    {
-                        day = val;
-                    }
+                    val = 0;
                     continue;
                 }
 
                 val *= 10;
                 val += c - '0';
-
             }
 
-            return new DateTime(year,month, day);
-        }
+            day = val;
 
-        public void ParseLine(char[] line)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dump()
-        {
-            throw new NotImplementedException();
+            return new DateTime(year, month, day);
         }
     }
 }

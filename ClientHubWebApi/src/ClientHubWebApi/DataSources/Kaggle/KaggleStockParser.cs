@@ -1,6 +1,7 @@
 ﻿using ClientHubWebApi.Configuration;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -50,10 +51,11 @@ namespace ClientHubWebApi.DataSources.Kaggle
             }
         }
 
-        public void ParseStream(Stream stream)
+        public List<Stock> ParseStream(Stream stream)
         {
             var lineParser = new LineParser();
             var sb = new StringBuilder();
+            var stocks = new List<Stock>(1000);
 
             bool endOfFile = false;
             while (stream.CanRead)
@@ -90,8 +92,10 @@ namespace ClientHubWebApi.DataSources.Kaggle
                     break;
                 }
 
-                lineParser.ParseLine(sb);
+                stocks.Add(lineParser.ParseLine(sb));
             }
+
+            return stocks;
         }
     }
 }
