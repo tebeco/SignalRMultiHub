@@ -22,7 +22,7 @@ namespace HubHandlingWebClient
         protected void Subscribe(string topic, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            _channel = _subscribtionManager.GetChannel()
+            //_channel = _subscribtionManager.GetChannel();
             timer = new Timer(Timer_Callback, null, 1000, 1000);
         }
 

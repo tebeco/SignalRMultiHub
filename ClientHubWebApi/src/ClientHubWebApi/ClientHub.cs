@@ -17,7 +17,7 @@ namespace ClientHubWebApi
         public async Task GetStream(RequestStream requestStream)
         {
             await Task.Yield();
-           var channel = _subscribtionManager.GetChannel(requestStream);
+           //var channel = _subscribtionManager.GetChannel(requestStream);
         }
 
         public override Task OnDisconnectedAsync(Exception exception)

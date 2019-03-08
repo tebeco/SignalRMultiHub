@@ -1,10 +1,8 @@
 ﻿using System.Text;
 
-public interface ILineParser
+public interface ILineParser<T>
 {
-    void ParseLine(string line);
-    void ParseLine(char[] line);
+    T ParseLine(StringBuilder line);
+
     void Dump();
-    void ParseLine(StringBuilder line);
-}
 }

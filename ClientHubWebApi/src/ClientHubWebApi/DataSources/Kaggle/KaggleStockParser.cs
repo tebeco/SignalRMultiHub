@@ -52,7 +52,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
 
         public void ParseStream(Stream stream)
         {
-            var lineParser = new LineParser();
+            var lineParser = new StockLineParser();
             var sb = new StringBuilder();
 
             bool endOfFile = false;

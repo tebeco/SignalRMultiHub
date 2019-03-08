@@ -4,11 +4,11 @@ using System.Text;
 
 namespace ClientHubWebApi.DataSources.Kaggle
 {
-    public sealed class LineParser : ILineParser
+    public class StockLineParser : ILineParser<Stock>
     {
-        private List<Stock> list = new List<Stock>();
+        //private List<Stock> list = new List<Stock>();
 
-        public void ParseLine(StringBuilder line)
+        public Stock ParseLine(StringBuilder line)
         {
             var startIndex = 0;
 
@@ -23,7 +23,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
             var volume = ParseSectionAsInt(line, ref startIndex);
             var openInt = ParseSectionAsInt(line, ref startIndex);
 
-            var valueHolder = new Stock(name, date, open, high, low, close, volume, openInt);
+            return new Stock(name, date, open, high, low, close, volume, openInt);
         }
 
         private static decimal ParseSectionAsDecimal(StringBuilder line, ref int startIndex)
@@ -143,17 +143,17 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 {
                     dashCounter++;
 
-                    if(dashCounter == 0)
+                    if(dashCounter == 1)
                     {
-                        day = val;
+                        year = val;
                     }
-                    else if (dashCounter == 1)
+                    else if (dashCounter == 2)
                     {
                         month = val;
                     }
                     else
                     {
-                        year = val;
+                        day = val;
                     }
                     continue;
                 }
@@ -162,12 +162,8 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 val += c - '0';
 
             }
-            return DateTime.Now;
-        }
 
-        public void ParseLine(string line)
-        {
-            throw new NotImplementedException();
+            return new DateTime(year,month, day);
         }
 
         public void ParseLine(char[] line)
