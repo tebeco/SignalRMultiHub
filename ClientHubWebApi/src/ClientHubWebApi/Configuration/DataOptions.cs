@@ -1,6 +1,6 @@
 ﻿namespace ClientHubWebApi.Configuration
 {
-    public class DataOptions
+    public class KaggleDataSourceFactoryOptions
     {
         public FolderConfiguration Stock { get; set; } = new FolderConfiguration();
 

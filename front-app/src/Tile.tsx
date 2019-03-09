@@ -1,58 +1,56 @@
 import React from 'react';
 import { Component } from 'react';
-import { SubscribeCallback } from './ConnectedApp';
 import { HubConnection } from '@aspnet/signalr';
 
 export type TileProps = {
-  tileId: string,
-  connection: HubConnection,
+  tileId: string;
+  connection: HubConnection;
 }
 
-export type TileState = {
+type TileState = {
   textGroupName?: string | string[] | number;
-  groupName: string| undefined;
+  subscribedStockName: string | undefined;
   lastMessage: string;
 }
+
 type ClientData = {
-  groupId:string,
-  data: string
+  groupId: string;
+  data: string;
 }
+
+export type Stock = {
+  name: string;
+  date: Date;
+  open: number;
+  low: number;
+  high: number;
+  close: number;
+  openInt: number;
+}
+
 export class Tile extends Component<TileProps, TileState> {
 
   constructor(props: TileProps) {
     super(props);
 
-    props.connection.on("foo", (payload: ClientData) => {
-
-      if(this.state.groupName === undefined || this.state.groupName !== payload.groupId){
-        return;
-      }
-
-      const newState: TileState = {
-        ...this.state,
-        lastMessage: payload.data
-      };
-      this.setState(newState);
-    });
-
     this.state = {
       textGroupName: '',
-      groupName: undefined,
+      subscribedStockName: 'msft',
       lastMessage: ''
     };
   }
 
 
   handleChange(textGroupName: string) {
-    this.setState({ groupName: textGroupName });
+    this.setState({ textGroupName: textGroupName });
   }
 
   render() {
     return (
       <>
         <p>{this.props.tileId}</p>
-        <input type="text" value={this.state.groupName} onChange={(e) => this.handleChange(e.target.value)} />
-        <button onClick={async (e) => await handleJoin(this.props.connection, this.state.groupName)}>Join</button>
+        <input type="text" value={this.state.textGroupName} onChange={(e) => this.handleChange(e.target.value)} />
+        <button onClick={async (e) => await handleJoin(this.props.connection, this.state.subscribedStockName)}>Join</button>
         <p>Last message : {this.state.lastMessage}</p>
       </>
     );
@@ -67,5 +65,19 @@ const handleJoin = async (connection: HubConnection, groupName?: string | string
 
   console.log(`joining group : ${groupName}`);
 
-  await connection.send('getStockStreamAsync', {underlying : groupName});
+  connection.stream("GetStockStreamAsync", { underlying: groupName })
+    .subscribe({
+      next: (item) => {
+        // if (this.state.subscribedStockName === undefined || this.state.subscribedStockName !== payload.name) {
+        //   return;
+        // }
+        console.log(item);
+      },
+      complete: () => {
+        console.log("stream has ended");
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
 }

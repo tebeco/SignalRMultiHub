@@ -29,7 +29,7 @@ namespace ClientHubWebApi.Tests
 
             Assert.Single(parsedStocksPerFile);
             var parsedFileName = parsedStocksPerFile.Keys.First();
-            Assert.Equal(fileName, parsedFileName);
+            Assert.Equal("msft", parsedFileName);
             var parsedStocks = parsedStocksPerFile.Values.First();
             Assert.Equal(7983, parsedStocks.Count);
         }

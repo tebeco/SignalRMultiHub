@@ -7,9 +7,8 @@ namespace HubHandlingWebClient.DataSources
 {
     public class PeriodicDataSource<T>
     {
-        private Timer timer = null;
+        private Timer _timer = null;
         private readonly IDataSource<T> _dataSource;
-        private readonly SubscribtionManager<T> _subscribtionManager;
         private CancellationToken _cancellationToken;
         private readonly ChannelWriter<T> _channelWriter;
 
@@ -22,7 +21,7 @@ namespace HubHandlingWebClient.DataSources
         public void Subscribe(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            timer = new Timer(Timer_Callback, null, 1000, 1000);
+            _timer = new Timer(Timer_Callback, null, 100, 100);
         }
 
         private void Timer_Callback(object state)
@@ -30,7 +29,7 @@ namespace HubHandlingWebClient.DataSources
             _ = CallbackAsync();
             if (!_cancellationToken.IsCancellationRequested)
             {
-                timer.Change(1000, 1000);
+                _timer.Change(100, 100);
             }
         }
 

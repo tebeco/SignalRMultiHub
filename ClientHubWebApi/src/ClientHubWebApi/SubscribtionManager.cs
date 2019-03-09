@@ -16,10 +16,9 @@ namespace ClientHubWebApi
         private readonly ConcurrentDictionary<string, Channel<Stock>> _stockChannels = new ConcurrentDictionary<string, Channel<Stock>>();
         private readonly KaggleDataSourceFactory _kaggleDataSourceFactory;
 
-        public SubscribtionManager()
+        public SubscribtionManager(KaggleDataSourceFactory kaggleDataSourceFactory)
         {
-            var kaggleOptions = Options.Create(new DataOptions());
-            _kaggleDataSourceFactory = new KaggleDataSourceFactory(kaggleOptions);
+            _kaggleDataSourceFactory = kaggleDataSourceFactory;
         }
 
         public ChannelReader<Stock> GetChannelReader(RequestStream requestStream)
@@ -32,7 +31,7 @@ namespace ClientHubWebApi
 
         private Channel<Stock> CreateStockDataSource(string channelName, RequestStream requestStream)
         {
-            var kaggleDataSource = _kaggleDataSourceFactory.CreateStockDataSource(requestStream);
+            var kaggleDataSource = _kaggleDataSourceFactory.GetOrCreateStockDataSource(requestStream);
             var channel = Channel.CreateUnbounded<Stock>();
 
             var dataSource = new PeriodicDataSource<Stock>(kaggleDataSource, channel.Writer);

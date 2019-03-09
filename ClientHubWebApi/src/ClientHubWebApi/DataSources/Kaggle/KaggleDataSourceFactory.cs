@@ -16,10 +16,16 @@ namespace ClientHubWebApi.DataSources.Kaggle
 
     public class KaggleDataSourceFactory
     {
-        private readonly DataOptions _options;
+        private readonly KaggleDataSourceFactoryOptions _options;
         private ConcurrentDictionary<string, List<Stock>> _kaggleStockDataSources;
+        private static List<Stock> _defaultStocks = new List<Stock>
+        {
+            new Stock("Default StockName", new DateTime(1986, 03, 13), 1,1,1,1,1,1),
+            new Stock("Default StockName", new DateTime(1986, 03, 13), 2, 2, 2, 2, 2, 2),
+            new Stock("Default StockName", new DateTime(1986, 03, 13), 3, 3, 3, 3, 3, 3),
+        };
 
-        public KaggleDataSourceFactory(IOptions<DataOptions> options)
+        public KaggleDataSourceFactory(IOptions<KaggleDataSourceFactoryOptions> options)
         {
             _options = options.Value;
         }
@@ -29,9 +35,9 @@ namespace ClientHubWebApi.DataSources.Kaggle
             _kaggleStockDataSources = CsvStockParser.ParseFolder(_options.Stock.Folder, _options.Stock.GlobbingPattern);
         }
 
-        public IDataSource<Stock> CreateStockDataSource(RequestStream requestStream)
+        public IDataSource<Stock> GetOrCreateStockDataSource(RequestStream requestStream)
         {
-            var source = _kaggleStockDataSources.GetValueOrDefault(requestStream.Underlying, new List<Stock>());
+            var source = _kaggleStockDataSources.GetValueOrDefault(requestStream.Underlying, _defaultStocks);
             return new InfiniteKaggleDataSource<Stock>(source);
         }
     }

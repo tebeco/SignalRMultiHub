@@ -19,7 +19,7 @@ namespace ClientHubWebApi.DataSources.Parsers
             Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, fileName =>
             {
                 var stocks = ParseFile(fileName);
-                stocksPerFile.TryAdd(Path.GetFileName(fileName), stocks);
+                stocksPerFile.TryAdd(Path.GetFileName(fileName).Split('.')[0], stocks);
             });
 
             return stocksPerFile;

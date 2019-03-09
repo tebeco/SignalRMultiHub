@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ClientHubWebApi.Configuration;
+using ClientHubWebApi.DataSources;
+using ClientHubWebApi.DataSources.Kaggle;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -27,11 +30,21 @@ namespace ClientHubWebApi
                         options.Configuration.ClientName = "WebSignalRClient";
                     })
                     /*/
-                    .AddAzureSignalR()
+                    //.AddAzureSignalR()
                     //*/
                     ;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddOptions<KaggleDataSourceFactoryOptions>()
+                    .Configure(options =>
+                    {
+                        options.Stock.Folder = @"C:\Workspace\KaggleData\Stocks";
+                        options.Stock.GlobbingPattern = "m*.txt";
+                    });
+            services.AddSingleton<SubscribtionManager<Stock>>();
+            services.AddSingleton<KaggleDataSourceFactory>();
+            services.AddHostedService<KaggleDataSourceFactoryInitializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
