@@ -66,5 +66,6 @@ const handleJoin = async (connection: HubConnection, groupName?: string | string
   }
 
   console.log(`joining group : ${groupName}`);
-  await connection.send('requestGroup', groupName.toString());
+
+  await connection.send('getStockStreamAsync', {underlying : groupName});
 }
