@@ -2,7 +2,8 @@
 {
     public class DataOptions
     {
-        public StockConfiguration Stock { get; set; }
-        public EtfConfiguration Etf { get; set; }
+        public FolderConfiguration Stock { get; set; } = new FolderConfiguration();
+
+        public FolderConfiguration Etf { get; set; } = new FolderConfiguration();
     }
 }

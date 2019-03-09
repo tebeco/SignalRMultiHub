@@ -6,8 +6,6 @@ namespace ClientHubWebApi.DataSources.Kaggle
 {
     public class LineParser : ILineParser<Stock>
     {
-        //private List<Stock> list = new List<Stock>();
-
         public Stock ParseLine(StringBuilder line)
         {
             var startIndex = 0;
@@ -107,7 +105,6 @@ namespace ClientHubWebApi.DataSources.Kaggle
         public static DateTime ParseSectionAsDateTime(StringBuilder line, ref int startIndex)
         {
             int dashCounter = 0;
-            int day = -1;
             int month = -1;
             int year = -1;
             int val = 0;
@@ -141,9 +138,7 @@ namespace ClientHubWebApi.DataSources.Kaggle
                 val += c - '0';
             }
 
-            day = val;
-
-            return new DateTime(year, month, day);
+            return new DateTime(year, month, val);
         }
     }
 }
