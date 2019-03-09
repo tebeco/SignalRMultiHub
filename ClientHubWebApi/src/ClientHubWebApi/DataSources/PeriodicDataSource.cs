@@ -3,26 +3,25 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace HubHandlingWebClient
+namespace HubHandlingWebClient.DataSources
 {
     public class PeriodicDataSource<T>
     {
         private Timer timer = null;
         private readonly IDataSource<T> _dataSource;
-        private readonly SubscribtionManager _subscribtionManager;
+        private readonly SubscribtionManager<T> _subscribtionManager;
         private CancellationToken _cancellationToken;
-        //private Channel<T> _channel;
+        private readonly ChannelWriter<T> _channelWriter;
 
-        public PeriodicDataSource(IDataSource<T> dataSource, SubscribtionManager subscribtionManager)
+        public PeriodicDataSource(IDataSource<T> dataSource, ChannelWriter<T> channelWriter)
         {
             _dataSource = dataSource;
-            _subscribtionManager = subscribtionManager;
+            _channelWriter = channelWriter;
         }
 
-        protected void Subscribe(string topic, CancellationToken cancellationToken)
+        public void Subscribe(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            //_channel = _subscribtionManager.GetChannel();
             timer = new Timer(Timer_Callback, null, 1000, 1000);
         }
 
@@ -40,7 +39,7 @@ namespace HubHandlingWebClient
             await Task.Yield();
             var data = _dataSource.GetNextData();
 
-            //await _channel.Writer.WriteAsync(data, _cancellationToken);
+            await _channelWriter.WriteAsync(data, _cancellationToken);
         }
     }
 }

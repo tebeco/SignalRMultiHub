@@ -10,6 +10,7 @@ namespace ClientHubWebApi.Tests
     {
         public static void AssertEqual(Stock expectedStock, Stock parsedStock)
         {
+            Assert.Equal(expectedStock.Name, parsedStock.Name);
             Assert.Equal(expectedStock.Date, parsedStock.Date);
             Assert.Equal(expectedStock.Open, parsedStock.Open);
             Assert.Equal(expectedStock.Low, parsedStock.Low);

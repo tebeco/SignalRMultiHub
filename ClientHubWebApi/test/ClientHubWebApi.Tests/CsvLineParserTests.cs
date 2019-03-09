@@ -12,7 +12,7 @@ using ClientHubWebApi.DataSources.Parsers;
 namespace ClientHubWebApi.Tests
 {
 
-    public class CsvLineParserTests
+    public class CsvStockLineParserTests
     {
         [Fact]
         public void Should_parse_stock_DateTime()
@@ -22,7 +22,7 @@ namespace ClientHubWebApi.Tests
             var sb = new StringBuilder(line);
             var startIndex = 0;
 
-            var parsedDate = LineParser.ParseSectionAsDateTime(sb, ref startIndex);
+            var parsedDate = StockLineParser.ParseSectionAsDateTime(sb, ref startIndex);
 
             Assert.Equal(expectedDate, parsedDate);
         }
@@ -35,7 +35,7 @@ namespace ClientHubWebApi.Tests
             var sb = new StringBuilder(line);
             var startIndex = 0;
 
-            var parsedLong = LineParser.ParseSectionAsLong(sb, ref startIndex);
+            var parsedLong = StockLineParser.ParseSectionAsLong(sb, ref startIndex);
 
             Assert.Equal(expectedLong, parsedLong);
         }
@@ -48,7 +48,7 @@ namespace ClientHubWebApi.Tests
             var sb = new StringBuilder(line);
             var startIndex = 0;
 
-            var parsedLong = LineParser.ParseSectionAsInt(sb, ref startIndex);
+            var parsedLong = StockLineParser.ParseSectionAsInt(sb, ref startIndex);
 
             Assert.Equal(expectedLong, parsedLong);
         }
@@ -61,7 +61,7 @@ namespace ClientHubWebApi.Tests
             var sb = new StringBuilder(line);
             var startIndex = 0;
 
-            var parsedDecimal = LineParser.ParseSectionAsDecimal(sb, ref startIndex);
+            var parsedDecimal = StockLineParser.ParseSectionAsDecimal(sb, ref startIndex);
 
             Assert.Equal(expectedDecimal, parsedDecimal);
         }
@@ -69,12 +69,11 @@ namespace ClientHubWebApi.Tests
         [Fact]
         public void Should_parse_line()
         {
-            var expectedStock = new Stock("", new DateTime(1986, 03, 13), 0.0672M, 0.07533M, 0.0672M, 0.07533M, 1371330506, 0);
+            var expectedStock = new Stock("some stock name", new DateTime(1986, 03, 13), 0.0672M, 0.07533M, 0.0672M, 0.07533M, 1371330506, 0);
             var line = "1986-03-13,0.0672,0.07533,0.0672,0.07533,1371330506,0";
             var sb = new StringBuilder(line);
 
-            var lineParser = new LineParser();
-            var parsedStock = lineParser.ParseLine(sb);
+            var parsedStock = StockLineParser.ParseLine(sb, "some stock name");
 
             StockTestHelper.AssertEqual(expectedStock, parsedStock);
         }

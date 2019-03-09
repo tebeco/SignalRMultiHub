@@ -4,15 +4,15 @@ using System.Text;
 
 namespace ClientHubWebApi.DataSources.Kaggle
 {
-    public class LineParser : ILineParser<Stock>
+    public static class StockLineParser
     {
-        public Stock ParseLine(StringBuilder line)
+        public static Stock ParseLine(StringBuilder line, string stockName)
         {
             var startIndex = 0;
 
             //Date,Open,High,Low,Close,Volume,OpenInt
             //1986-03-13,0.0672,0.07533,0.0672,0.07533,1371330506,0
-            var name = "NEED TO CHANGE NAME";
+            var name = stockName;
             var date = ParseSectionAsDateTime(line, ref startIndex);
             var open = ParseSectionAsDecimal(line, ref startIndex);
             var high = ParseSectionAsDecimal(line, ref startIndex);

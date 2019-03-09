@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ClientHubWebApi.DataSources;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -7,27 +8,21 @@ namespace ClientHubWebApi
 {
     public class ClientHub : Hub
     {
-        private readonly SubscribtionManager _subscribtionManager;
-
-        public ClientHub(SubscribtionManager subscribtionManager)
+        public ClientHub()
         {
-            _subscribtionManager = subscribtionManager;
         }
 
-        public async Task GetStream(RequestStream requestStream)
+        public Task GetStockStreamAsync(RequestStream requestStream)
         {
-            await Task.Yield();
-           //var channel = _subscribtionManager.GetChannel(requestStream);
+            var subscribtionManager = new SubscribtionManager<Stock>();
+            var channelReader = subscribtionManager.GetChannelReader(requestStream);
+
+            return Task.CompletedTask;
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
             return Task.CompletedTask;
         }
-    }
-
-    public class RequestStream
-    {
-        string Underlying { get; set; }
     }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace ClientHubWebApi.DataSources.Parsers
 {
-    public class CsvParser
+    public class CsvStockParser
     {
-        public ConcurrentDictionary<string, List<Stock>> ParseFolder(string folder, string searchPattern)
+        public static ConcurrentDictionary<string, List<Stock>> ParseFolder(string folder, string searchPattern)
         {
             var files = Directory.GetFiles(folder, searchPattern);
             var stocksPerFile = new ConcurrentDictionary<string, List<Stock>>(Environment.ProcessorCount, files.Length);
@@ -25,17 +25,16 @@ namespace ClientHubWebApi.DataSources.Parsers
             return stocksPerFile;
         }
 
-        public List<Stock> ParseFile(string fileName)
+        public static List<Stock> ParseFile(string fileName)
         {
             using (var reader = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None, 1024))
             {
-                return ParseStream(reader);
+                return ParseStream(reader, Path.GetFileName(fileName));
             }
         }
 
-        public List<Stock> ParseStream(Stream stream)
+        public static List<Stock> ParseStream(Stream stream, string stockName)
         {
-            var lineParser = new LineParser();
             var sb = new StringBuilder();
             var stocks = new List<Stock>(1000);
             var ignoringLine = false;
@@ -84,7 +83,7 @@ namespace ClientHubWebApi.DataSources.Parsers
 
                 if (sb.Length != 0)
                 {
-                    stocks.Add(lineParser.ParseLine(sb));
+                    stocks.Add(StockLineParser.ParseLine(sb, stockName));
                 }
             }
 
