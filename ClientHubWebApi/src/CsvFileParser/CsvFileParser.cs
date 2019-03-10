@@ -53,23 +53,7 @@ namespace CsvFileParser
 
         public static void ProcessLine(ReadOnlySequence<byte> readOnlySequence) { }
 
-        public static int ParseIntWithToArray(ReadOnlySequence<byte> readOnlySequence)
-        {
-            int val = 0;
-            var buffer = readOnlySequence.ToArray();
-
-            foreach (var b in buffer)
-            {
-                char c = (char)b;
-
-                val *= 10;
-                val += c - '0';
-            }
-
-            return val;
-        }
-
-        public static bool ParseInt(ReadOnlySequence<char> sequence, out int value)
+        public static bool TryParsePositiveInteger(ReadOnlySequence<char> sequence, out int value)
         {
             int val = 0;
 
@@ -78,6 +62,28 @@ namespace CsvFileParser
                 foreach (var c in memory.Span)
                 {
                     if(c <'0' || c > '9')
+                    {
+                        value = default;
+                        return false;
+                    }
+                    val *= 10;
+                    val += c - '0';
+                }
+            }
+
+            value = val;
+            return true;
+        }
+
+        public static bool TryParsePositiveLong(ReadOnlySequence<char> sequence, out long value)
+        {
+            long val = 0;
+
+            foreach (var memory in sequence)
+            {
+                foreach (var c in memory.Span)
+                {
+                    if (c < '0' || c > '9')
                     {
                         value = default;
                         return false;
