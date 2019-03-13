@@ -22,9 +22,9 @@ namespace System
             return pipe.Reader;
         }
 
-        public static ReadOnlySequence<char> ToReadOnlySequence(this string value)
+        public static ReadOnlySequence<byte> ToReadOnlySequence(this string value)
         {
-            return new ReadOnlySequence<char>(value.AsMemory());
+            return new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(value));
         }
     }
 }
