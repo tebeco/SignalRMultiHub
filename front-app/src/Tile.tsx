@@ -50,7 +50,36 @@ export class Tile extends Component<TileProps, TileState> {
       <>
         <p>{this.props.tileId}</p>
         <input type="text" value={this.state.textGroupName} onChange={(e) => this.handleChange(e.target.value)} />
-        <button onClick={async (e) => await handleJoin(this.props.connection, this.state.subscribedStockName)}>Join</button>
+        <button onClick={async (e) => {
+
+          var stream = await handleJoin(this.props.connection, this.state.subscribedStockName);
+          if (stream != null) {
+            stream.subscribe({
+              next: (item) => {
+                // if (this.state.subscribedStockName === undefined || this.state.subscribedStockName !== payload.name) {
+                //   return;
+                // }
+                this.setState({
+                  ...this.state,
+                  lastMessage: item.high.toString()
+                });
+              },
+              complete: () => {
+                this.setState({
+                  ...this.state,
+                  lastMessage: "stream has ended"
+                });
+              },
+              error: (err) => {
+                this.setState({
+                  ...this.state,
+                  lastMessage: err.toString()
+                });
+              }
+            });
+          }
+        }
+        }>Join</button>
         <p>Last message : {this.state.lastMessage}</p>
       </>
     );
@@ -65,19 +94,5 @@ const handleJoin = async (connection: HubConnection, groupName?: string | string
 
   console.log(`joining group : ${groupName}`);
 
-  connection.stream("GetStockStreamAsync", { underlying: groupName })
-    .subscribe({
-      next: (item) => {
-        // if (this.state.subscribedStockName === undefined || this.state.subscribedStockName !== payload.name) {
-        //   return;
-        // }
-        console.log(item);
-      },
-      complete: () => {
-        console.log("stream has ended");
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+  return connection.stream("GetStockStreamAsync", { underlying: groupName });
 }
