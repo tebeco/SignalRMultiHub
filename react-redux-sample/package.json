@@ -8,6 +8,7 @@
     "@types/react": "16.8.8",
     "@types/react-dom": "16.8.2",
     "@types/react-redux": "^7.0.3",
+    "@types/webpack-env": "^1.13.9",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-redux": "^6.0.1",
