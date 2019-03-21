@@ -4,11 +4,12 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({});
 
-export const configureStore = () => {
+export const configureStore = (preloadedState :any = {}) => {
     const enhancer = composeWithDevTools(applyMiddleware(thunk));
 
     const store = createStore(
         rootReducer,
+        preloadedState,
         enhancer
     );
 
