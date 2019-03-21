@@ -3,11 +3,15 @@ import { connect } from 'react-redux';
 import './App.css';
 import { ConnectivityState } from '../store/appState';
 
+export type AppProps = {
+  currentState: any
+}
+
 const mapStateToProps = (state: ConnectivityState) => ({
   currentState: state
 })
 
-const AppComponent = (props:any) => {
+const AppComponent = (props: AppProps) => {
   return (
     <div className="App">
       <p>{JSON.stringify(props)}</p>
