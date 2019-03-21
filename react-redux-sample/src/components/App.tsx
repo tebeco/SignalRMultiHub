@@ -11,6 +11,10 @@ const mapStateToProps = (state: ConnectivityState) => ({
   currentState: state
 })
 
+const mapDispatchToProps = (dispatch : any) => {
+  // return bindActionCreators(ConnectionAction, dispatch)
+}
+
 const AppComponent = (props: AppProps) => {
   return (
     <div className="App">
@@ -19,4 +23,4 @@ const AppComponent = (props: AppProps) => {
   );
 }
 
- export const App = connect(mapStateToProps)(AppComponent);
+ export const App = connect(mapStateToProps, mapDispatchToProps)(AppComponent);
